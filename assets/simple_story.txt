@@ -1,0 +1,59 @@
+:: Start
+This is the start of the story.  
+
+There may be long, rambling passages that go here in order to:
+* give background to the main character,
+* give the setting of the story,
+* show supporting characters (if any),
+* give some idea about how to move around,
+* explain what the goal is  
+
+It may be so much text that you end up having to 
+scroll down the screen to see it all.
+
+Or maybe there will be multiple non-choice links to
+avoid having to scroll the screen.
+
+For our story ...
+
+There are two passages:
+* Would you like to take the [[Left]] passage?
+* or the [[Right]] passage?
+
+
+
+:: Left
+You chose the left passage.
+
+You found a silver key!
+
+<<set $hasSilverKey = 1>>
+
+<<display 'GoToStart'>>
+
+
+
+:: GoToStart
+... go to [[Start]]
+
+
+
+:: Right
+You chose the right passage.
+
+<<if $hasSilverKey>>
+There is a door to another passage.  Your silver key fits the lock and opens it.
+* Continue on to the [[Next]] passage
+<<else>>
+There is a locked door to another passage.
+<<endif>>
+
+
+
+:: Next
+You made it to the final passage!
+
+<<display 'GoToStart'>>
+
+
+
