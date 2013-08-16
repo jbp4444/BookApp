@@ -1,0 +1,302 @@
+(dp0
+S'buildDestination'
+p1
+V/Users/jbp/seq/twine/simple_story.html
+p2
+sS'saveDestination'
+p3
+V/Users/jbp/seq/corona/BookApp/assets/simple_story.tws
+p4
+sS'target'
+p5
+S'sugarcane'
+p6
+sS'storyPanel'
+p7
+(dp8
+S'widgets'
+p9
+(lp10
+(dp11
+S'selected'
+p12
+I00
+sS'pos'
+p13
+(lp14
+I10
+aI10
+asS'passage'
+p15
+(itiddlywiki
+Tiddler
+p16
+(dp17
+S'text'
+p18
+VThis is the start of the story.\u000a\u000aThere may be long, rambling passages that go here in order to:\u000a* give background to the main character,\u000a* give the setting of the story,\u000a* show any supporting characters,\u000a* give some idea about how to move around,\u000a* explain what the goal is\u000a\u000aIt may be so much text that you end up having to\u000ascroll down the screen to see it all.\u000a\u000aOr maybe there will be multiple non-choice links to\u000aavoid having to scroll the screen.\u000a\u000aFor our story ...\u000a\u000aThere are two passages here.\u000a* Would you like to take the [[Left]] passage?\u000a* or the [[Right]] passage?\u000a\u000a
+p19
+sS'tags'
+p20
+(lp21
+sS'created'
+p22
+ctime
+struct_time
+p23
+((I2013
+I8
+I6
+I14
+I2
+I35
+I1
+I218
+I1
+tp24
+(dp25
+tp26
+Rp27
+sS'modified'
+p28
+g27
+sS'title'
+p29
+VStart
+p30
+sbsa(dp31
+g12
+I00
+sg13
+(lp32
+I226
+aI12
+asg15
+(itiddlywiki
+Tiddler
+p33
+(dp34
+g18
+VYou chose the left passage.\u000a\u000aYou found a silver key!\u000a\u000a<<set $hasSilverKey = 1>>\u000a\u000a<<display 'GoToStart'>>\u000a
+p35
+sg20
+(lp36
+sg22
+g23
+((I2013
+I8
+I6
+I14
+I9
+I7
+I1
+I218
+I1
+tp37
+(dp38
+tp39
+Rp40
+sg28
+g40
+sg29
+VLeft
+p41
+sbsa(dp42
+g12
+I00
+sg13
+(lp43
+I78
+aI281
+asg15
+(itiddlywiki
+Tiddler
+p44
+(dp45
+g18
+VYou chose the right passage.\u000a\u000a<<if $hasSilverKey>>\u000aThere is a door to another passage.  Your silver key fits the lock and opens it.\u000a* Continue on to the [[Next]] passage\u000a<<else>>\u000aThere is a locked door to another passage.\u000a<<display 'GoToStart'>>\u000a<<endif>>\u000a
+p46
+sg20
+(lp47
+sg22
+g23
+((I2013
+I8
+I6
+I14
+I9
+I23
+I1
+I218
+I1
+tp48
+(dp49
+tp50
+Rp51
+sg28
+g51
+sg29
+VRight
+p52
+sbsa(dp53
+g12
+I00
+sg13
+(lp54
+I275
+aI282
+asg15
+(itiddlywiki
+Tiddler
+p55
+(dp56
+g18
+VYou made it to the final passage!\u000a\u000aThere are two potions on a table, one is red and one is blue:\u000a<<actions 'DrinkRed' 'DrinkBlue'>>\u000a\u000a<<display 'GoToStart'>>\u000a
+p57
+sg20
+(lp58
+sg22
+g23
+((I2013
+I8
+I6
+I14
+I19
+I42
+I1
+I218
+I1
+tp59
+(dp60
+tp61
+Rp62
+sg28
+g62
+sg29
+VNext
+p63
+sbsa(dp64
+g12
+I00
+sg13
+(lp65
+I430
+aI10
+asg15
+(itiddlywiki
+Tiddler
+p66
+(dp67
+S'text'
+p68
+V... go to [[Start]]\u000a
+p69
+sS'tags'
+p70
+(lp71
+sS'created'
+p72
+g23
+((I2013
+I8
+I8
+I15
+I23
+I9
+I3
+I220
+I1
+tp73
+(dp74
+tp75
+Rp76
+sS'modified'
+p77
+g76
+sS'title'
+p78
+VGoToStart
+p79
+sbsa(dp80
+g12
+I00
+sg13
+(lp81
+I605
+aI210
+asg15
+(itiddlywiki
+Tiddler
+p82
+(dp83
+S'text'
+p84
+VYou drank the Red potion!\u000a\u000a* Back to [[Next]]\u000a
+p85
+sS'tags'
+p86
+(lp87
+sS'created'
+p88
+g23
+((I2013
+I8
+I16
+I9
+I49
+I30
+I4
+I228
+I1
+tp89
+(dp90
+tp91
+Rp92
+sS'modified'
+p93
+g92
+sS'title'
+p94
+VDrinkRed
+p95
+sbsa(dp96
+g12
+I01
+sg13
+(lp97
+I578
+aI381
+asg15
+(itiddlywiki
+Tiddler
+p98
+(dp99
+g84
+VYou drank the Blue potion ... Oh No!\u000a\u000a* Back to [[Next]]\u000a
+p100
+sg86
+(lp101
+sg88
+g23
+((I2013
+I8
+I16
+I9
+I49
+I34
+I4
+I228
+I1
+tp102
+(dp103
+tp104
+Rp105
+sg93
+g105
+sg94
+VDrinkBlue
+p106
+sbsasS'scale'
+p107
+I1
+ss.
