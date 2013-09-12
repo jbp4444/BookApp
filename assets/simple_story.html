@@ -1,33 +1,35 @@
 :: Start
-This is the start of the story.
+<img src='assets/image.png'> This is the start of the story.
 
 There may be long, rambling passages that go here in order to:
-* give background to the main character,
-* give the setting of the story,
-* show any supporting characters,
-* give some idea about how to move around,
-* explain what the goal is
-
+<ul>
+<li> give background to the main character,
+<li> give the setting of the story,
+<li> show any supporting characters,
+<li> give some idea about how to move around,
+<li> explain what the goal is
+</ul>
+<p>
 It may be so much text that you end up having to
 scroll down the screen to see it all.
-
+<p>
 Or maybe there will be multiple non-choice links to
 avoid having to scroll the screen.
-
+<p>
 For our story ...
-
+<p>
 There are two passages here.
-* Would you like to take the [[Left]] passage?
-* or the [[Right]] passage?
-
-
+<ul>
+<li> Would you like to take the [[Left]] passage?
+<li> or the [[Right]] passage?
+</ul>
 
 
 :: Left
 You chose the left passage.
-
+<p>
 You found a silver key!
-
+<p>
 <<set $hasSilverKey = 1>>
 
 <<display 'GoToStart'>>
@@ -41,17 +43,20 @@ You found a silver key!
 
 :: DrinkRed
 You drank the Red potion!
-
-* Back to [[Next]]
+<ul>
+<li> Back to [[Next]]
+</ul>
 
 
 
 :: Right
 You chose the right passage.
-
+<p>
 <<if $hasSilverKey>>
 There is a door to another passage.  Your silver key fits the lock and opens it.
-* Continue on to the [[Next]] passage
+<ul>
+<li> Continue on to the [[Next]] passage
+</ul>
 <<else>>
 There is a locked door to another passage.
 <<display 'GoToStart'>>
@@ -61,7 +66,7 @@ There is a locked door to another passage.
 
 :: Next
 You made it to the final passage!
-
+<p>
 There are two potions on a table, one is red and one is blue:
 <<actions 'DrinkRed' 'DrinkBlue'>>
 
@@ -71,8 +76,9 @@ There are two potions on a table, one is red and one is blue:
 
 :: DrinkBlue
 You drank the Blue potion ... Oh No!
-
-* Back to [[Next]]
+<ul>
+<li> Back to [[Next]]
+</ul>
 
 
 
