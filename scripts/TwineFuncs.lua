@@ -23,47 +23,112 @@ function unrollMacros( tlist, plist, vars )
 	local rtn = {}
 	local rc = 1
 	
+	local psg_title = tlist["title"]
+	
 	-- handle the "<<display" tags .. include another passage inside this one
+	-- also removes the 'title' entry from table
 	for c,text in pairs(tlist) do
-		dprint( 15, "parse-text ["..text.."]" )
-		local m = text:match("%<%<display%s*%'(.*)%'.*%>%>")
-		if( m == nil ) then
+		dprint( 15, "parse-text-1 ["..c.."|"..text.."]" )
+		if( c == "title" ) then
+			-- skip it
+		else
+			local m = text:match("%<%<display%s*%'(.*)%'.*%>%>")
+			if( m == nil ) then
+				rtn[rc] = text
+				rc = rc + 1
+			else
+				dprint( 20, "inserting ["..m.."]" )
+				local tlist2 = plist[m]
+				for cc,tt in pairs(tlist2) do
+					-- TODO: recurse to load display-within-display passages
+					if( cc == "title" ) then
+						-- skip it
+					else
+						rtn[rc] = tt
+						rc = rc + 1
+					end
+				end
+			end
+		end
+	end
+
+	
+	-- TODO: handle the "<<choice" tags
+	-- TODO: for now, expanding them into bullet list
+	local rtn2 = {}
+	local rc2 = 1
+	for c,text in pairs(rtn) do
+		dprint( 15, "parse-text-2 ["..c.."|"..text.."]" )
+		local kk = text:match("%<%<choice%s+(.-)%>%>")
+		if( kk == nil ) then
+			-- not a match
+			rtn2[rc2] = text
+			rc2 = rc2 + 1
+		else
+			dprint( 5, "choice ["..kk.."]" )
+			rtn2[rc2] = "* [[" .. a .. "]]"
+			rc2 = rc2 + 1
+		end
+	end
+	
+	-- handle the "<<action" tags
+	-- TODO: for now, expanding them into bullet list
+	local rtn = {}
+	local rc = 1
+	for c,text in pairs(rtn2) do
+		dprint( 15, "parse-text-3 ["..c.."|"..text.."]" )
+		local kk = text:match("%<%<actions%s+(.-)%>%>")
+		if( kk == nil ) then
+			-- not a match
 			rtn[rc] = text
 			rc = rc + 1
 		else
-			dprint( 20, "inserting ["..m.."]" )
-			local tlist2 = plist[m]
-			for cc,tt in pairs(tlist2) do
-				-- TODO: recurse to load display-within-display passages
-				rtn[rc] = tt
-				rc = rc + 1
+			-- TODO: we may want to count the number of "actions" macros in a passage
+			-- i.e. right now we can only handle one per passage
+			dprint( 5, "actions ["..kk.."]" )
+			local ctr = 1
+			local i,j,a = string.find( kk, "%'(.-)%'" )
+			while( i ~= nil ) do
+				if( storyVars[psg_title.." actions "..ctr] ~= nil ) then
+					-- already visited, so just print the text (no link)
+					rtn[rc] = "* " .. a
+					rc = rc + 1
+				else
+					rtn[rc] = "* [[" .. a .. "]]"
+					rc = rc + 1
+				end
+				kk = kk:sub(j+1)
+				i,j,a = string.find( kk, "%'(.-)%'" )
 			end
 		end
 	end
 	
-	-- TODO: handle the "<<choice" tags
-	
-	-- TODO: handle the "<<action" tags
-	
-	-- TODO: handle the "<<set" tags
+	-- handle the "<<set" tags
+	-- TODO: need to check for if/then first, then process the 'set' command
+	rtn2 = {}
+	rc2 = 1
 	for c,text in pairs(rtn) do
-		dprint( 15, "parse-text ["..text.."]" )
+		dprint( 15, "parse-text-4 ["..c.."|"..text.."]" )
 		local kk,vv = text:match("%<%<set%s+%$(.-)%s*%=%s*(.-)%>%>")
 		if( kk == nil ) then
 			-- not a match
+			rtn2[rc2] = text
+			rc2 = rc2 + 1
 		else
 			dprint( 5, "setting ["..kk.."]=["..vv.."]" )
 			local new_val = evalString( vv, vars )
 			dprint( 5, "   val=["..new_val.."]" )
 			vars[kk] = new_val
-			rtn[c] = nil
 		end
 	end
 	
-	-- TODO: handle the "<<if" tags
+	-- handle the "<<if" tags
+	-- TODO: this assumes no nesting (we could count nest-level)
+	rtn = {}
+	rc = 1
 	local print_flag = 1
-	for c,text in pairs(rtn) do
-		dprint( 5, "parse-text ["..text.."]" )
+	for c,text in pairs(rtn2) do
+		dprint( 15, "parse-text-5 ["..c.."|"..text.."]" )
 		local mif = text:match("%<%<if%s+(.-)%s*%>%>")
 		local melse = text:match("%<%<else(.-)%s*%>%>")
 		local mendif = text:match("%<%<endif%s*%>%>")
@@ -77,7 +142,6 @@ function unrollMacros( tlist, plist, vars )
 			else
 				print_flag = 0
 			end
-			rtn[c] = nil
 		elseif( melse ~= nil ) then
 			-- we've encountered an else statement
 			if( print_flag == 0 ) then
@@ -85,14 +149,14 @@ function unrollMacros( tlist, plist, vars )
 			else
 				print_flag = 0
 			end
-			rtn[c] = nil
 		elseif( mendif ~= nil ) then
 			-- we've encountered an endif statement
-			-- TODO: this assumes no nesting (we could count nest-level)
 			print_flag = 1
-			rtn[c] = nil
 		elseif( print_flag == 0 ) then
-			rtn[c] = nil
+			-- skip/no printing of this line
+		else
+			rtn[rc] = text
+			rc = rc + 1
 		end
 	end
 
@@ -114,6 +178,7 @@ function loadTwineFile( filename )
 		if( string.sub(ll,1,3) == ':: ' ) then
 			local pname = string.sub(ll,4)
 			text = {}
+			text["title"] = pname
 			plist[pname] = text
 			c = 1
 		else
