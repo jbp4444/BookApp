@@ -22,7 +22,7 @@ local scene = storyboard.newScene()
 
 local function processButton( event )
 	if( event.target == scene.startBtn ) then
-		settings.currentPassage = passageList["Start"]
+		settings.currentPassage = "Start"
 		storyVars = {}
 		storyboard.gotoScene( "scripts.BookScreen", {
 			effect = "slideLeft",

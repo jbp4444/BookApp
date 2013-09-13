@@ -37,14 +37,15 @@ settings = {
 }
 
 -- helper function
-debug_level = 9
+debug_level = 21
 
 dprint( 5, "display is "..display.contentWidth.." x "..display.contentHeight )
 
 -- load the file in (just do this once)
 storyVars = {}
-passageList = loadTwineFile( "books/simple_story.txt" )
-settings.currentPassage = passageList["Start"]
+templateFile = loadTemplateFile( "assets/theme.html" )
+passageList = loadTwineFile( "assets/simple_story.html" )
+settings.currentPassage = "Start"
 
 
 -- load splash screen

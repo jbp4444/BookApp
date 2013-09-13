@@ -20,180 +20,71 @@ require( "scripts.TwineFuncs" )
 
 local scene = storyboard.newScene()
 
-local plist = {}
 
-local function processButton( event )
-	if( event.target == scene.backBtn ) then
-		storyboard.gotoScene( "scripts.MainScreen" )
-		return true
-	end
-	return false
-end
+local function handleTransition( obj )
+	-- make text slide in from the right
+	obj.x = 1.1 * display.contentWidth
 
-local function processTouch( event )
-	dprint( 10, "processTouch .. "..event.phase )
-	if( event.phase == "ended" ) then
-		local target = event.target
-		if( target ~= nil ) then
-			local type = target.myType
-			if( type == nil ) then
-				-- not sure what just happened here
-			elseif( type == "link" ) then
-				local text = target.myText
-				local link = text:match( "%[%[(.*)%]%]" )
-				dprint( 15, "found link ["..link.."]" )
-				settings.currentPassage = passageList[link]
-				storyboard.gotoScene( "scripts.BookScreen2", {
-					effect = settings.effect,
-					time = 300
-				})
-			end
-		end
-	end
+	
+	-- parse the Twine code and process the template
+	dprint( 10, "starting to parse ["..settings.currentPassage.."] (ht2)" )
+	local text = ProcessTemplate( "page1.html", settings.currentPassage )
+	
+	-- the obj argument is the webview
+	obj:request( "page1.html", system.DocumentsDirectory )
+
+	transition.to( obj, {
+		alpha = 1,
+		x = display.contentWidth * 0.50,
+		time = 300
+	})
 	
 	return true
 end
 
-function scene:clearPassage()
-	-- local group = self.view
-	local group = self.textArea
+local function handleUrlEvent( event )	
 
-	for i=group.numChildren,1,-1 do
-		local child = group[i]
-		child.parent:remove( child )
-	end
-end
-
-function scene:displayPassage( tlist )
-	-- local group = self.view
-	local group = self.textArea
-	local scroll = self.scroll
-
-	-- set the scroll to the top
-	scroll:scrollToPosition( { y = 0 })
-	-- clear any old display objects
-	self:clearPassage()
+	local url = event.url
+	dprint( 5, "caught url ["..url.."]" )
+	dprint( 5, "  name is [".. event.name .."]" )
+	dprint( 5, "  type is [".. event.type .."]" )
 	
-	-- unroll the macros
-	local tlist2 = unrollMacros( tlist, passageList, storyVars )
-	
-	-- estimate the total height of the window
-	-- specifically, do we need to enable scrolling?
-	local total_height = 0
-	for k,text in pairs(tlist2) do
-		if( text == nil ) then
-			-- skip it
-		elseif( text == "" ) then
-			-- blank line
-			total_height = total_height + 20
+	local i,j = string.find(url,"corona:")
+	if( i ~= nil ) then
+		local s = url:sub(j+1)
+		dprint( 10, "jumping to ["..s.."]" )
+		local webview = scene.webview
+		if( s == "mainmenu" ) then
+			-- webview is cleaned up in exitScene
+			storyboard.gotoScene( "scripts.MainScreen" )
 		else
-			local num_lines = math.ceil( text:len() / 30 )
-			total_height = total_height + 20*num_lines
+			-- TODO: should send the new passage as a param
+			-- we'll do global var for now
+			-- make the text slide off to the left
+			settings.currentPassage = s
+			transition.to( webview, {
+				alpha = 0,
+				x = -1.1 * display.contentWidth,
+				time = 300,
+				onComplete = handleTransition
+			})
 		end
-	end
-	dprint( 5, "total estim height ["..total_height.."]" )
-	
-	-- this works to disable scrolling, but if scrolling is enabled
-	-- then it can scroll the whole size (set to 10*display)
-	if( total_height > (display.contentHeight-30) ) then
-		dprint( 6, "   scroll is unlocked" )
-		--scroll.isLocked = false
-		scroll._view._isVerticalScrollingDisabled = false
 	else
-		dprint( 6, "   scroll is locked" )
-		--scroll.isLocked = true
-		scroll._view._isVerticalScrollingDisabled = true
-		-- make new bg image the right size
-		total_height = display.contentHeight - 30
-	end
-	
-	-- try xnailbender's approach .. resize the bg image
-	local bgimg = self.bgimg
-	display.remove( bgimg )
-	bgimg = nil
-	bgimg = display.newRect( 0, 0, display.contentWidth, total_height )
-	bgimg:setFillColor( 30,30,10 )
-	scroll:insert( 1, bgimg )
-	self.bgimg = bgimg
-
-	local top   = 20
-	local cwidth = display.contentWidth * 0.80
-	local cheight = display.contentHeight - 150
-	for k,text in pairs(tlist2) do
-		if( text == nil ) then
-			-- skip it
-		elseif( text == "" ) then
-			-- blank line
-			top = top + 20
-		else
-			local num_lines = math.ceil( text:len() / 30 )
-			
-			if( text:find("%[%[") ~= nil ) then
-				-- this line has a link in it
-				local bght = 20*num_lines
-				local textBg = display.newRect( 20, top, cwidth, bght )
-				textBg:setFillColor( 140, 140, 140 )
-				textBg.myType = "link"
-				textBg.myText = text
-				textBg:addEventListener( "touch", processTouch )
-				group:insert( textBg )
-			end
-			-- the text box (not directly clickable)
-			dprint( 15, "text=["..text.."]" )
-			local textBox = display.newText( text, 20, top,
-				cwidth, cheight, native.systemFont, 16	)
-			group:insert( textBox )
-
-			top = top + 20*num_lines
+		if( url:sub(1,4) == "http" ) then
+			system.openURL( url )
 		end
 	end
 
+	return true
 end
+
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	dprint( 10, "createScene-BookScreen" )
 	
 	local group = self.view
-
-	local backBtn = widget.newButton( {
-			width  = 55,
-			height = 25,
-			left = display.contentWidth - 60,
-			top = 2,
-			label  = "Back",
-			fontSize = 12,
-			onPress = processButton
-	})
-	backBtn:setReferencePoint( display.TopLeftReferencePoint )
-	group:insert( backBtn )
-	self.backBtn = backBtn
-
-	scrollMax = 100
-	local scroll = widget.newScrollView( {
-		left = 0,
-		top = 30,
-		width = display.contentWidth,
-		height = display.contentHeight - 30,
-		scrollWidth = display.contentWidth,
-		scrollHeight = 10*display.contentHeight,
-		horizontalScrollDisabled = true,
-		--isLocked = true,
-		backgroundColor = {0,0,0},
-		--listener = scrollListener
-	})
-	group:insert( scroll )
-	self.scroll = scroll
 	
-	local bgimg = display.newRect( 0, 0, display.contentWidth, 10*display.contentHeight )
-	bgimg:setFillColor( 30,10,10 )
-	scroll:insert( bgimg )
-	self.bgimg = bgimg
-
-	local textArea = display.newGroup()
-	scroll:insert( textArea )
-	self.textArea = textArea
-
 end
 
 
@@ -202,13 +93,19 @@ function scene:enterScene( event )
 	dprint( 10, "enterScene-BookScreen" )
 
 	local group = self.view
+	
+	-- parse the Twine code and process the template
+	dprint( 10, "starting to parse ["..settings.currentPassage.."]" )
+	local text = ProcessTemplate( "page1.html", settings.currentPassage )
+	
+	-- create a webview
+	local webview = native.newWebView( 0,0, display.contentWidth, display.contentHeight )
+	webview:request( "page1.html", system.DocumentsDirectory )
+	webview:addEventListener( "urlRequest", handleUrlEvent )
+	--group:insert( webview )
+	self.webview = webview
 
-	local tlist = settings.currentPassage
-	if( tlist == nil ) then
-		tlist = passageList["Start"]
-	end
-	self:displayPassage( tlist )
-
+	dprint( 10, "webview [" .. tostring(webview) .. "]" )
 end
 
 
@@ -217,21 +114,22 @@ function scene:exitScene( event )
 	dprint( 10, "exitScene-BookScreen" )
 
 	local group = self.view
-
-	self:clearPassage()
+	
+	local webview = self.webview
+	webview:removeSelf()
+	webview = nil
+	scene.webview = nil
 	
 end
 
 
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
+
 	local group = self.view
 
-	-----------------------------------------------------------------------------
-
-	--	INSERT code here (e.g. remove listeners, widgets, save state, etc.)
-
-	-----------------------------------------------------------------------------
+	
+	
 
 end
 
