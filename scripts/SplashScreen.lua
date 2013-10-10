@@ -22,7 +22,7 @@ local scene = storyboard.newScene()
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	dprint( 10, "createScene-SplashScreen" )
+	dprint( 9, "createScene-SplashScreen" )
 
 	local group = self.view
 
@@ -64,7 +64,7 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-	dprint( 10, "enterScene-SplashScreen" )
+	dprint( 9, "enterScene-SplashScreen" )
 
 	local group = self.view
 
@@ -135,7 +135,7 @@ end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
-	dprint( 10, "exitScene-SplashScreen" )
+	dprint( 9, "exitScene-SplashScreen" )
 
 	local group = self.view
 
@@ -144,6 +144,8 @@ end
 
 -- Called prior to the removal of scene's "view" (display group)
 function scene:destroyScene( event )
+	dprint( 9, "destroyScene-SplashScreen" )
+
 	local group = self.view
 
 	-----------------------------------------------------------------------------

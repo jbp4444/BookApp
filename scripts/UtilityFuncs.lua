@@ -14,6 +14,77 @@
 --   limitations under the License.
 --
 
+-- from: http://www.coronalabs.com/blog/2013/04/16/lua-string-magic/
+function string:split( inSplitPattern, outResults )
+
+   if not outResults then
+      outResults = { }
+   end
+   local theStart = 1
+   local theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+   while theSplitStart do
+      table.insert( outResults, string.sub( self, theStart, theSplitStart-1 ) )
+      theStart = theSplitEnd + 1
+      theSplitStart, theSplitEnd = string.find( self, inSplitPattern, theStart )
+   end
+   table.insert( outResults, string.sub( self, theStart ) )
+   return outResults
+end
+
+-- to parse strings like:  ((img src="foo" width="bar"))
+function string:getopts( )
+	local out = {}
+	-- assign some defaults
+	out.width = '100%'
+	out.height = '100%'
+	out.x = 0
+	out.y = 0
+	-- TODO: check for '((' and '))'
+	-- get the "type" of the string (right after the '((')
+	local i = 2
+	local j = self:find( "%s", i+1 )
+	local k = "type"
+	local v = self:sub(i+1,j-1)
+	out[k] = v
+	-- now look for other key=value pairs
+	local e = 0
+	i = self:find( "%a", j+1 )
+	while( i ~= nil ) do
+		j = self:find( "%s", i+1 )
+		if( j == nil ) then
+			-- TODO: this assumes '))' are the last two chars
+			j = self:len() - 1
+		end
+		e = self:find( "=", i+1 )
+		k = self:sub(i,e-1)
+		v = self:sub(e+1,j-1)
+		v = v:gsub( "'", "" )
+		out[k] = v
+		dprint( 12, "k ["..k.."]  v ["..v.."]" )
+
+		i = self:find( "%a", j+1 )
+	end
+	
+	return out
+end
+
+function convertWidthPct( s )
+	local i = s:find("%%")
+	if( i == nil ) then
+		return (s+0)
+	end
+	local p = s:sub(1,i-1)
+	return( display.contentWidth * (p+0)/100 )
+end
+function convertHeightPct( s )
+	local i = s:find("%%")
+	if( i == nil ) then
+		return (s+0)
+	end
+	local p = s:sub(1,i-1)
+	return( display.contentHeight * (p+0)/100 )
+end
+
 function dprint( num, txt )
 	-- how much printing do we want?
 	if( num < debug_level ) then

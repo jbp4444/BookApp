@@ -45,28 +45,6 @@ function FindTitle( ast )
 	return( "error2" )
 end
 
-function ProcessHtml( text )
-	local output = text
-	
-	local i,j = output:find("img src=")
-	if( i ~= nil ) then
-		output = output:sub(1,j+1)
-			.. settings.relativePath
-			.. output:sub(j+2)
-	end
-	
-	local i = output:find("%[%[")
-	if( i ~= nil ) then
-		local j = output:find("%]%]")
-		local x = output:sub(i+2,j-1)
-		output = output:sub(1,i-1)
-			.. "<a href='corona:"..x.."'>" .. x .. "</a>"
-			.. output:sub(j+2)
-	end
-	
-	return( output )
-end
-
 function PrependData( title, settext )
 	dprint( 20, "prepending data to ["..title.."]" )
 	dprint( 20, "   set storyVars["..settext.."]" )
@@ -108,7 +86,7 @@ function walk_ast( ast )
 	elseif( tp == "text" ) then
 		dprint( 20, "  text [".. ast.data .."]" )
 		-- look for path names for images, etc.
-		text = ProcessHtml( ast.data )
+		text = ast.data
 				
 	elseif( tp == "display" ) then
 		dprint( 20, "  display [".. ast.data .. "]" )
@@ -127,14 +105,14 @@ function walk_ast( ast )
 			if( storyVars[title.." choice"] ~= nil ) then
 				if( storyVars[title.." choice"] == ctr ) then
 					dprint( 20, "choice-taken [* " .. a .. "]" )
-					text = text .. "<li> <a href='corona:"..a.."'>"..a.."</a></li>\n"
+					text = text .. "* "..a.."\n"
 				else
 					dprint( 20, "choice-not-avail [* " .. a .. "]" )
-					text = text .. "<li> "..a.."</li>\n"
+					text = text .. "* "..a.."\n"
 				end
 			else
 				dprint( 20, "choice-avail [* " .. a .. "]" )
-				text = text .. "<li> <a href='corona:"..a.."'>"..a.."</a></li>\n"
+				text = text .. "* [["..a.."]]\n"
 			end
 			m = m:sub(j+1)
 			i,j,a = string.find( m, "%'(.-)%'" )
@@ -153,11 +131,10 @@ function walk_ast( ast )
 			PrependData( a, title.." actions "..ctr.."=1" )
 			if( storyVars[title.." actions "..ctr] ~= nil ) then
 				dprint( 20, "action-taken [* " .. a .. "]" )
-				-- TODO:  should be:
-				text = text .. "<li> "..a.."</li>\n"
+				text = text .. "* "..a.."\n"
 			else
 				dprint( 20, "action-avail [* " .. a .. "]" )
-				text = text .. "<li> <a href='corona:"..a.."'>"..a.."</a></li>\n"
+				text = text .. "* [["..a.."]]\n"
 			end
 			m = m:sub(j+1)
 			i,j,a = string.find( m, "%'(.-)%'" )
@@ -201,7 +178,7 @@ function walk_ast( ast )
 	end
 
 	if( ast.next ~= nil ) then
-		text = text .. walk_ast( ast.next )
+		text = text .. "\n" .. walk_ast( ast.next )
 	end
 	
 	return( text )
@@ -209,15 +186,15 @@ end
 
 function loadTwineFile( filename )
 	--local path = filename
-	local path = system.pathForFile( filename, system.resourceDirectory )
+	local path = system.pathForFile( filename, system.ResourceDirectory )
 	local plist = {}
 	local ast = {}
 	local count = 0
 
-	dprint( 20,"loadTwineFile "..filename.." ["..path.."]" )
+	dprint( 9, "loadTwineFile "..filename.." ["..path.."]" )
 
 	for line in io.lines( path ) do
-		local ll = line:gsub( "[\n\r\v]", "" )	    
+		local ll = line:gsub( "[\n\r\v]", "" )
 		if( string.sub(ll,1,3) == ':: ' ) then
 			count = count + 1
 			if( count > 200 ) then
@@ -347,53 +324,15 @@ function loadTwineFile( filename )
 	return( plist )
 end
 
-function loadTemplateFile( filename )
-	local path = system.pathForFile( filename, system.resourceDirectory )
-	dprint( 20,"loadTemplateFile "..filename.." ["..path.."]" )
-
-	-- TODO: this assumes all images are in same 'assets' directory
-	-- as the template file
-	local relpath = path
-	local n = relpath:find(filename)
-	relpath = relpath:sub(1,n-1)
-	settings.relativePath = relpath
-	dprint( 20, "relpath is ["..relpath.."]" )
-	
-	local fp = io.open( path, "r" )
-	local text = fp:read( "*a" )
-	io.close( fp )
-	fp = nil
-	
-	return( text )
-end
-
-function ProcessTemplate( fname, title )
+function ProcessPassage( title )
 
 	local ast = passageList[title]
 	dprint( 20, "parsing twine passage ["..title.."]" )
 	dprint( 20, ast )
-	local intext = walk_ast( ast )
+	local text = walk_ast( ast )
 
-	-- TODO: should we allow "PASSAGE_TITLE" entries in template?
+	dprint( 15, "pp-text = ["..text.."]" )
 	
-	-- grab the header area (up thru "PASSAGE_TEXT")
-	local i,j = templateFile:find("PASSAGE_TEXT")
-	local text = templateFile:sub(1,i-1)
-	
-	-- insert text
-	text = text .. intext
-
-	-- append the rest of the template	
-	text = text .. templateFile:sub(j+1)
-	
-	--dprint( 20, "text = ["..text.."]" )
-	
-	-- save it to a temp file
-	local path = system.pathForFile( fname, system.DocumentsDirectory )
-	local file = io.open( path, "w" )
-	file:write( text )
-	io.close( file )
-	file = nil
-
+	return text
 end
 
