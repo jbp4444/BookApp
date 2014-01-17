@@ -28,6 +28,13 @@ device-specific testing.
 
 - - - - - - - - - - - - -
 
+Some to-do items:
+
+* Add a keyword for the style sheet so you can alter font-size, color, etc. from
+within the program
+
+- - - - - - - - - - - - -
+
 Twine:
 	http://gimcrackd.com/etc/src/
 

@@ -55,11 +55,12 @@ function scene:createScene( event )
 		local btn = widget.newButton( {
 			width  = display.contentWidth * 0.75,
 			height = 100,
-			left = display.contentWidth * 0.125,
 			label  = txt,
 			onPress = processButton
 		})
-		btn:setReferencePoint( display.TopLeftReferencePoint )
+		btn.x = display.contentWidth * 0.50
+		btn.anchorX = 0.5
+		btn.anchorY = 0
 		return btn
 	end
 

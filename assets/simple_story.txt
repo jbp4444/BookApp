@@ -1,4 +1,5 @@
 :: Start
+((img src='assets/image.png' width='100%' height='100'))
 This is the start of the story.
 
 There may be long, rambling passages that go here in order to:
@@ -8,11 +9,9 @@ There may be long, rambling passages that go here in order to:
 * give some idea about how to move around,
 * explain what the goal is
 
-It may be so much text that you end up having to
-scroll down the screen to see it all.
+It may be so much text that you end up having to scroll down the screen to see it all.
 
-Or maybe there will be multiple non-choice links to
-avoid having to scroll the screen.
+Or maybe there will be multiple non-choice links to avoid having to scroll the screen.
 
 For our story ...
 
@@ -24,6 +23,8 @@ There are two passages here.
 
 
 :: Left
+((bgimg src='assets/bg1.jpg'))
+((moveto x='0' y='200'))
 You chose the left passage.
 
 You found a silver key!
@@ -65,7 +66,7 @@ You made it to the final passage!
 There are two potions on a table, one is red and one is blue:
 <<actions 'DrinkRed' 'DrinkBlue'>>
 
-<<display 'GoToStart'>>
+<<display 'LastChoice'>>
 
 
 
@@ -73,6 +74,33 @@ There are two potions on a table, one is red and one is blue:
 You drank the Blue potion ... Oh No!
 
 * Back to [[Next]]
+
+
+
+:: LastChoice
+There is a monster here:
+
+<<choice 'Attack'>>
+<<choice 'Hide'>>
+
+
+
+:: Attack
+((moveto x='0' y='200'))
+You've attacked the monster
+
+* Back to [[Next]]
+
+* Back to [[Start]]
+
+
+
+:: Hide
+You've hidden from the monster
+
+* Back to [[Next]]
+
+* Back to [[Start]]
 
 
 

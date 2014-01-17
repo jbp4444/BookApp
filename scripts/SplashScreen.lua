@@ -27,9 +27,12 @@ function scene:createScene( event )
 	local group = self.view
 
 	local function getColorbar( num )
-		local img = display.newRect( 0,0, display.contentWidth,100)
-		img:setReferencePoint( display.TopLeftReferencePoint )
-		img:setFillColor( 40*num,0,0 )
+		local img = display.newRect( 0,0, display.contentWidth,100 )
+		--img:setReferencePoint( display.TopLeftReferencePoint )
+		img.y = -200
+		img.anchorX = 0
+		img.anchorY = 0
+		img:setFillColor( num/6,0,0 )
 		return img
 	end
 	

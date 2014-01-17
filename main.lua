@@ -15,19 +15,13 @@
 --
 
 local storyboard = require( "storyboard" )
+local widget = require( "widget" )
 require( "scripts.UtilityFuncs" )
 require( "scripts.TwineFuncs" )
 
-display.setStatusBar(display.HiddenStatusBar)
-math.randomseed(os.time())
-
--- constants
-STAGE_LEFT = display.screenOriginX
-STAGE_TOP = display.screenOriginY
-STAGE_WIDTH = ( display.contentWidth + STAGE_LEFT * -2 )
-STAGE_HEIGHT = ( display.contentHeight + STAGE_TOP * -2 )
-HALF_WIDTH = ( STAGE_WIDTH / 2 )
-HALF_HEIGHT = ( STAGE_HEIGHT / 2 )
+widget.setTheme( "widget_theme_ios" )
+display.setStatusBar( display.HiddenStatusBar )
+math.randomseed( os.time() )
 
 -- global settings
 settings = {
@@ -37,16 +31,18 @@ settings = {
 }
 
 -- helper function
-debug_level = 21
+debug_level = 12
 
 dprint( 5, "display is "..display.contentWidth.." x "..display.contentHeight )
 
 -- load the file in (just do this once)
 storyVars = {}
-templateFile = loadTemplateFile( "assets/theme.html" )
-passageList = loadTwineFile( "assets/simple_story.html" )
+--templateFile = loadTemplateFile( "assets/theme.html.txt" )
+passageList = loadTwineFile( "assets/simple_story.txt" )
 settings.currentPassage = "Start"
+
+dprint( 5, "loaded file" )
 
 
 -- load splash screen
-storyboard.gotoScene( "scripts.SplashScreen" )
+storyboard.gotoScene( "scripts.BookScreen" )

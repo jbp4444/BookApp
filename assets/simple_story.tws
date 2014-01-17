@@ -5,7 +5,7 @@ V/Users/jbp/seq/twine/simple_story.html
 p2
 sS'saveDestination'
 p3
-V/Users/jbp/seq/corona/BookApp/assets/simple_story.tws
+V/Users/jbp/seq/corona/BookAppC/assets/simple_story.tws
 p4
 sS'target'
 p5
@@ -143,15 +143,15 @@ g12
 I00
 sg13
 (lp54
-I275
-aI282
+I274
+aI280
 asg15
 (itiddlywiki
 Tiddler
 p55
 (dp56
 g18
-VYou made it to the final passage!\u000a\u000aThere are two potions on a table, one is red and one is blue:\u000a<<actions 'DrinkRed' 'DrinkBlue'>>\u000a\u000a<<display 'GoToStart'>>\u000a
+VYou made it to the final passage!\u000a\u000aThere are two potions on a table, one is red and one is blue:\u000a<<actions 'DrinkRed' 'DrinkBlue'>>\u000a\u000a<<display 'LastChoice'>>\u000a
 p57
 sg20
 (lp58
@@ -261,7 +261,7 @@ VDrinkRed
 p95
 sbsa(dp96
 g12
-I01
+I00
 sg13
 (lp97
 I578
@@ -296,7 +296,123 @@ g105
 sg94
 VDrinkBlue
 p106
+sbsa(dp107
+g12
+I01
+sg13
+(lp108
+I392
+aI500
+asg15
+(itiddlywiki
+Tiddler
+p109
+(dp110
+S'text'
+p111
+VThere is a monster here:\u000a\u000a<<choice 'Attack'>>\u000a<<choice 'Hide'>>\u000a
+p112
+sS'tags'
+p113
+(lp114
+sS'created'
+p115
+g23
+((I2013
+I9
+I29
+I10
+I4
+I21
+I6
+I272
+I1
+tp116
+(dp117
+tp118
+Rp119
+sS'modified'
+p120
+g119
+sS'title'
+p121
+VLastChoice
+p122
+sbsa(dp123
+g12
+I00
+sg13
+(lp124
+I36
+aI647
+asg15
+(itiddlywiki
+Tiddler
+p125
+(dp126
+g111
+VYou've attacked the monster\u000a\u000a* Back to [[Next]]\u000a\u000a* Back to [[Start]]\u000a
+p127
+sg113
+(lp128
+sg115
+g23
+((I2013
+I9
+I29
+I10
+I5
+I26
+I6
+I272
+I1
+tp129
+(dp130
+tp131
+Rp132
+sg120
+g132
+sg121
+VAttack
+p133
+sbsa(dp134
+g12
+I00
+sg13
+(lp135
+I293
+aI678
+asg15
+(itiddlywiki
+Tiddler
+p136
+(dp137
+g111
+VYou've hidden from the monster\u000a\u000a* Back to [[Next]]\u000a\u000a* Back to [[Start]]\u000a
+p138
+sg113
+(lp139
+sg115
+g23
+((I2013
+I9
+I29
+I10
+I6
+I33
+I6
+I272
+I1
+tp140
+(dp141
+tp142
+Rp143
+sg120
+g143
+sg121
+VHide
+p144
 sbsasS'scale'
-p107
+p145
 I1
 ss.

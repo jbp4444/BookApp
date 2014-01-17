@@ -98,11 +98,11 @@ function scene:displayPassage( psg )
 	self:clearScreen()
 
 	local alltext = ProcessPassage( psg )
-	--print( "alltext ["..alltext.."]" )
+	--dprint( 10, "alltext ["..alltext.."]" )
 	local data = alltext:split("\n")
 	
 	local top  = 10
-	local vsep = settings.fontSize + 4
+	local vsep = settings.fontsize + 4
 	local cwidth = display.contentWidth * 0.90
 	--local cheight = display.contentHeight - 150
 	local cheight = display.contentHeight
@@ -123,7 +123,8 @@ function scene:displayPassage( psg )
 						fname, system.ResourceDirectory, 
 						display.contentWidth,
 						display.contentHeight )
-					img:setReferencePoint( display.TopLeftReferencePoint )
+					img.anchorX = 0
+					img.anchorY = 0
 					img.x = 0
 					img.y = 0
 					img.width = display.contentWidth
@@ -136,7 +137,8 @@ function scene:displayPassage( psg )
 					local fname = tbl.src
 					local img = display.newImageRect( group, 
 						fname, system.ResourceDirectory, wd,ht )
-					img:setReferencePoint( display.TopLeftReferencePoint )
+					img.anchorX = 0
+					img.anchorY = 0
 					img.x = 0
 					img.y = top
 					img.width = wd
@@ -153,9 +155,18 @@ function scene:displayPassage( psg )
 			else
 				-- the text box (not directly clickable)
 				dprint( 15, "text=["..text.."] top="..top..";" )
-				local textBox = display.newText( text, 20, top,
-					cwidth, 0, native.systemFont, settings.fontSize	)
-				group:insert( textBox )
+				local textBox = display.newText({
+					parent = group,
+					text = text, 
+					x = 20, 
+					y = top,
+					width = cwidth, 
+					height = 0,
+					font = native.systemFont,
+					fontSize = settings.fontsize
+				})
+				textBox.anchorX = 0
+				textBox.anchorY = 0
 			
 				local t_wd = textBox.contentWidth
 				local t_ht = textBox.contentHeight
@@ -164,10 +175,10 @@ function scene:displayPassage( psg )
 					-- this line has a link in it
 					local textBg = display.newRoundedRect( 0,top, 
 						cwidth+5,t_ht+5, 10 )
-					dprint( 15, "text-bg [0,"..top..","..cwidth..","
-							..(t_ht+5).."]" )
-					textBg:setFillColor( 0,0,140 )
-					textBg.strokeWidth = 4
+					textBg.anchorX = 0
+					textBg.anchorY = 0
+					textBg:setFillColor( 0,0,140/256 )
+					textBg.strokeWidth = 3
 					textBg:setStrokeColor( 0,0,0 )
 					textBg.myType = "link"
 					textBg.myText = text
@@ -197,23 +208,28 @@ function scene:createScene( event )
 	local group = self.view
 	
 	local scroll = widget.newScrollView( {
-		left = 0,
-		top = 0,
+		--left = 0,
+		--top = 0,
 		width = display.contentWidth,
 		height = display.contentHeight,
 		scrollWidth = display.contentWidth,
 		scrollHeight = 10*display.contentHeight,
 		horizontalScrollDisabled = true,
 		--isLocked = true,
-		backgroundColor = {77,0,0},
+		backgroundColor = {77/256,0,0},
 		--listener = scrollListener
 	})
+	scroll.x = 0
+	scroll.y = 0
+	scroll.anchorX = 0
+	scroll.anchorY = 0
 	group:insert( scroll )
 	self.scroll = scroll
 	
 	local bgimg = display.newRect( 0, 0, display.contentWidth, 10*display.contentHeight )
-	bgimg:setReferencePoint( display.TopLeftReferencePoint )
-	bgimg:setFillColor( 10,50,10 )
+	bgimg.anchorX = 0
+	bgimg.anchorY = 0
+	bgimg:setFillColor( 10/256,50/156,10/256 )
 	scroll:insert( bgimg )
 	self.bgimg = bgimg
 
@@ -224,13 +240,15 @@ function scene:createScene( event )
 	local backBtn = widget.newButton( {
 			width  = 55,
 			height = 25,
-			left = display.contentWidth - 65,
-			top = display.contentHeight + 50,
+			--left = display.contentWidth - 65,
+			--top = display.contentHeight + 50,
 			label  = "Back",
 			fontSize = 12,
 			onPress = processButton
 	})
-	backBtn:setReferencePoint( display.TopLeftReferencePoint )
+	backBtn.x = display.contentWidth * 0.50
+	backBtn.anchorX = 0.5
+	backBtn.anchorY = 0
 	scroll:insert( backBtn )
 	self.backBtn = backBtn
 
@@ -244,7 +262,7 @@ function scene:enterScene( event )
 	local group = self.view
 
 	-- parse the Twine code and process the template
-	dprint( 10, "starting to parse ["..settings.currentPassage.."]" )
+	dprint( 10, "starting from ["..settings.currentPassage.."]" )
 
 	self:displayPassage( settings.currentPassage )
 
