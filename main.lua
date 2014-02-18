@@ -27,7 +27,7 @@ math.randomseed( os.time() )
 settings = {
 	colormap = 1,
 	effect = "slideLeft",
-	fontsize = 12
+	fontsize = 24
 }
 
 -- helper function
@@ -38,6 +38,7 @@ dprint( 5, "display is "..display.contentWidth.." x "..display.contentHeight )
 -- load the file in (just do this once)
 storyVars = {}
 --templateFile = loadTemplateFile( "assets/theme.html.txt" )
+--passageList = loadTwineFile( "assets/calvin.txt" )
 passageList = loadTwineFile( "assets/simple_story.txt" )
 settings.currentPassage = "Start"
 

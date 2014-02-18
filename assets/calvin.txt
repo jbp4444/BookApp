@@ -1,0 +1,18 @@
+:: Start
+((bgimg src='assets/calvin/ch140114.gif'))
+* [[Page1]]
+
+:: Page1
+((bgimg src='assets/calvin/ch140115.gif'))
+* Prev: [[Start]]
+* Next: [[Page2]]
+
+:: Page2
+((bgimg src='assets/calvin/ch140116.gif'))
+* Prev: [[Page1]]
+* Next: [[Page3]]
+
+:: Page3
+((bgimg src='assets/calvin/ch140117.gif'))
+* Prev: [[Page2]]
+* [[Start]]

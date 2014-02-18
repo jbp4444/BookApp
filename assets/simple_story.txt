@@ -1,5 +1,5 @@
 :: Start
-((img src='assets/image.png' width='100%' height='100'))
+((img src='assets/image.png' width='50%' height='100'))
 This is the start of the story.
 
 There may be long, rambling passages that go here in order to:
@@ -8,6 +8,10 @@ There may be long, rambling passages that go here in order to:
 * show any supporting characters,
 * give some idea about how to move around,
 * explain what the goal is
+
+aaa <<print either("foo","bar","baz") >> bbb 
+<<print random(1,6) >> 
+<<print foo >>
 
 It may be so much text that you end up having to scroll down the screen to see it all.
 
@@ -41,6 +45,7 @@ You found a silver key!
 
 
 :: DrinkRed
+<<set $health = $health + 1 >>
 You drank the Red potion!
 
 * Back to [[Next]]
@@ -50,11 +55,12 @@ You drank the Red potion!
 :: Right
 You chose the right passage.
 
-<<if $hasSilverKey>>
+<<if $hasSilverKey > 0 >>
 There is a door to another passage.  Your silver key fits the lock and opens it.
 * Continue on to the [[Next]] passage
 <<else>>
 There is a locked door to another passage.
+
 <<display 'GoToStart'>>
 <<endif>>
 
@@ -71,6 +77,7 @@ There are two potions on a table, one is red and one is blue:
 
 
 :: DrinkBlue
+<<set $health = $health - 1 >>
 You drank the Blue potion ... Oh No!
 
 * Back to [[Next]]
@@ -78,8 +85,10 @@ You drank the Blue potion ... Oh No!
 
 
 :: LastChoice
-There is a monster here:
+There is a dragon here 
+(and your health is only <<print $health >> )
 
+Do you:
 <<choice 'Attack'>>
 <<choice 'Hide'>>
 
@@ -87,9 +96,11 @@ There is a monster here:
 
 :: Attack
 ((moveto x='0' y='200'))
-You've attacked the monster
-
-* Back to [[Next]]
+<<if $health > 0 >>
+You've killed the monster!!
+<<else>>
+In your weakened state, you couldn't overcome the monster ... you've died!
+<<endif>>
 
 * Back to [[Start]]
 
@@ -97,8 +108,6 @@ You've attacked the monster
 
 :: Hide
 You've hidden from the monster
-
-* Back to [[Next]]
 
 * Back to [[Start]]
 
