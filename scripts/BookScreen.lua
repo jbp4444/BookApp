@@ -52,7 +52,7 @@ local function handleTransition( obj )
 end
 
 local function processTouch( event )
-	dprint( 10, "processTouch .. "..event.phase )
+	dprint( 12, "processTouch .. "..event.phase )
 	if( event.phase == "ended" ) then
 		local target = event.target
 		if( target ~= nil ) then
@@ -60,8 +60,7 @@ local function processTouch( event )
 			if( type == nil ) then
 				-- not sure what just happened here
 			elseif( type == "link" ) then
-				local text = target.myText
-				local link = text:match( "%[%[(.*)%]%]" )
+				local link = target.myText
 				dprint( 15, "found link ["..link.."]" )
 				settings.currentPassage = link
 				
@@ -155,9 +154,35 @@ function scene:displayPassage( psg )
 			else
 				-- the text box (not directly clickable)
 				dprint( 15, "text=["..text.."] top="..top..";" )
+				local printedText = text
+				local linkText = text
+				if( text:find("%[%[") ~= nil ) then
+					-- this line has a link in it
+					-- is it [[link]] or [[text|link]] ??
+					local i1,j1 = text:find("%[%[")
+					local i2,j2 = text:find("%]%]")
+					local ttt = text:sub(j1+1,i2-1)
+					local i3,j3 = ttt:find("|")
+					if( i3 ~= nil ) then
+						-- this is [[text|link]]
+						linkText = ttt:sub(j3+1)
+						printedText = text:sub(1,i1-1)
+										.. ttt:sub(j3+1)
+										.. text:sub(j2+1)
+						dprint( 20, "text1 ["..linkText.."] ["..printedText.."]" )
+					else
+						-- this is just [[link]]
+						linkText = ttt
+						printedText = text:sub(1,i1-1) 
+										.. ttt
+										.. text:sub(j2+1) 
+						dprint( 20, "text2 ["..linkText.."] ["..printedText.."]" )
+					end
+				end
+
 				local textBox = display.newText({
 					parent = group,
-					text = text, 
+					text = printedText, 
 					x = 20, 
 					y = top,
 					width = cwidth, 
@@ -181,7 +206,7 @@ function scene:displayPassage( psg )
 					textBg.strokeWidth = 3
 					textBg:setStrokeColor( 0,0,0 )
 					textBg.myType = "link"
-					textBg.myText = text
+					textBg.myText = linkText
 					textBg:addEventListener( "touch", processTouch )
 					group:insert( textBg )
 					-- put the text back on top

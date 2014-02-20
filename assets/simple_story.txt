@@ -9,9 +9,11 @@ There may be long, rambling passages that go here in order to:
 * give some idea about how to move around,
 * explain what the goal is
 
+Some crazy testing/debugging stuff here ...
 aaa <<print either("foo","bar","baz") >> bbb 
 <<print random(1,6) >> 
 <<print foo >>
+... ok, all done with that.
 
 It may be so much text that you end up having to scroll down the screen to see it all.
 
@@ -89,17 +91,17 @@ There is a dragon here
 (and your health is only <<print $health >> )
 
 Do you:
-<<choice 'Attack'>>
-<<choice 'Hide'>>
+<<choice 'Attack' 'Attack the dragon?'>>
+<<choice 'Hide' 'Hide from the dragon?'>>
 
 
 
 :: Attack
 ((moveto x='0' y='200'))
 <<if $health > 0 >>
-You've killed the monster!!
+You've killed the dragon!!
 <<else>>
-In your weakened state, you couldn't overcome the monster ... you've died!
+In your weakened state, you couldn't overcome the dragon ... you've died!
 <<endif>>
 
 * Back to [[Start]]

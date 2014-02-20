@@ -184,7 +184,7 @@ function evalMath( text )
 		end
 	end
 	
-	dprint( 1, "output ["..output.."]" )
+	dprint( 15, "output ["..output.."]" )
 
 	-- TODO: then, look for unary negation (e.g. -5)
 

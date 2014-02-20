@@ -52,6 +52,7 @@ function PrependData( title, settext )
 	local astnxt = ast.next
 	-- title ast-node should be at the top of the list 
 	dprint( 20, "  type="..ast.type )
+	dprint( 20, "  astnxt type="..astnxt.type )
 
 	if( astnxt.type == "set" ) then
 		local data = astnxt.data
@@ -108,27 +109,32 @@ function walk_ast( ast )
 		dprint( 20, "  choice [".. ast.data .. "]" )
 		-- TODO: handle choice (allow only 1 selection)
 		local m = ast.data
+		-- NOTE: ast.data may contain just 'title' or {'text' 'title'}
 		local ctr = 1
-		local i,j,a = string.find( m, "%'(.-)%'" )
-		while( i ~= nil ) do
-			local title = FindTitle( ast )
-			-- modify the ast for the target passage so that it sets a storyVar for us
-			PrependData( a, title.." choice="..ctr )
-			if( storyVars[title.." choice"] ~= nil ) then
-				if( storyVars[title.." choice"] == ctr ) then
-					dprint( 20, "choice-taken [* " .. a .. "]" )
-					text = text .. "\n* "..a
-				else
-					dprint( 20, "choice-not-avail [* " .. a .. "]" )
-					text = text .. "\n* "..a
-				end
+		local i,j,link = string.find( m, "%'(.-)%'" )
+		local i2,j2,a2 = string.find( m, "%'(.-)%'", j+1 )
+		local txt
+		if( i2 == nil ) then
+			-- only a title was given
+			txt = link
+		else
+			-- title and text were given
+			txt = a2
+		end
+		local title = FindTitle( ast )
+		-- modify the ast for the target passage so that it sets a storyVar for us
+		PrependData( link, title.." choice="..ctr )
+		if( storyVars[title.." choice"] ~= nil ) then
+			if( storyVars[title.." choice"] == ctr ) then
+				dprint( 0, "choice-taken [* " .. txt .. "]" )
+				text = text .. "\n* "..txt
 			else
-				dprint( 20, "choice-avail [* " .. a .. "]" )
-				text = text .. "\n* [["..a.."]]"
+				dprint( 0, "choice-not-avail [* " .. txt .. "]" )
+				text = text .. "\n* "..txt
 			end
-			m = m:sub(j+1)
-			i,j,a = string.find( m, "%'(.-)%'" )
-			ctr = ctr + 1
+		else
+			dprint( 20, "choice-avail [* " .. txt .. "]" )
+			text = text .. "\n* [["..txt.."|"..link.."]]"
 		end
 		
 	elseif( tp == "actions" ) then
@@ -289,10 +295,14 @@ function loadTwineFile( filename )
 				elseif( tp == "choice" ) then
 					new_ast.type = "choice"
 					local kk = ll:match("%<%<choice%s+(.-)%>%>")
+					-- NOTE: kk may include just the place to jump to
+					-- or both a 'text' 'link' items
 					new_ast.data = kk
 				elseif( tp == "actions" ) then
 					new_ast.type = "actions"
 					local kk = ll:match("%<%<actions%s+(.-)%>%>")
+					-- NOTE: kk may include just the place to jump to
+					-- or both a 'text' 'link' items
 					new_ast.data = kk
 				elseif( tp == "set" ) then
 					new_ast.type = "set"
